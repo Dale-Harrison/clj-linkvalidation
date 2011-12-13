@@ -1,6 +1,10 @@
 (ns valurl.core
   (:gen-class :main true)
+  (:use clojure.contrib.command-line)
   (:use valurl.urlvalidation))
 
-(defn -main[]
-  (process-links (get-links "http://www.google.co.uk/")))
+(defn -main[& args]
+  (with-command-line args
+    ""
+    [[url "The URL to be processed" "http://www.google.co.uk"]]
+    (process-links (get-links url))))
