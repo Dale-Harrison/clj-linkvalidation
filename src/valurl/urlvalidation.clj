@@ -1,6 +1,7 @@
 (ns valurl.urlvalidation
   (:require [net.cgrand.enlive-html :as html])
-  (:require [clj-http.client :as client]))
+  (:require [clj-http.client :as client])
+  (:require [valurl.database :as db]))
 
 (defn fetch-url
   [url]
@@ -9,14 +10,14 @@
 (defn fix-relative-urls
   [rootlink links newlinks]
   (if (not (= (next links) nil))
-    (do (if (not (= (re-find #"http" (first links)) (seq nil)))
-	  (concat rootlink (concat newlinks (first links))))
-	(recur rootlink (rest links) newlinks))
-    newlinks))
+      (do
+	(if (not (= (re-find #"http" (first links)) (seq nil)))
+	  (concat rootlink (concat  (first links))))
+	(recur rootlink (rest links) newlinks))))
 
 (defn get-links
   [url]
-  (fix-relative-urls url (map :href (map :attrs (html/select (fetch-url url) [:a])))))
+  (map #(vector url %)(map :href (map :attrs (html/select (fetch-url url) [:a])))))
 
 (defn is-working
   [link]
@@ -27,12 +28,10 @@
 
 (defn process-links
   [links]
-  (if (not (empty? links))
+  (if (not (is-working (get (first links) 1)))
     (do
-      (if (not (is-working (first links)))
-	(do
-	  (println (str (first links) " is not working"))
-	  (recur (rest links)))
-	(do
-	  (println (str (first links) " is working"))
-	  (recur (concat (rest links) (get-links (first links)))))))))
+      (db/add-bad-url (get (first links) 1) (get (first links) 0))
+      (recur (rest links)))
+    (do
+      (recur (concat (rest links) (get-links (get (first links) 1)))))))
+
