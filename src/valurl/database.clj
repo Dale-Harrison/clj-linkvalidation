@@ -20,3 +20,8 @@
 (defn add-bad-url [url rootlink]
   (sql/with-connection db-params
     (sql/insert-values :brokenurls [:url :rootlink] [url rootlink])))
+
+(defn delete-all-urls
+  [root]
+  (sql/with-connection db-params
+    (sql/drop-table :brokenurls)))
