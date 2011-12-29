@@ -7,17 +7,15 @@
   [url]
   (html/html-resource (java.net.URL. url)))
 
-(defn fix-relative-urls
-  [rootlink links newlinks]
-  (if (not (= (next links) nil))
-      (do
-	(if (not (= (re-find #"http" (first links)) (seq nil)))
-	  (concat rootlink (concat  (first links))))
-	(recur rootlink (rest links) newlinks))))
-
+(defn fix-relative-url
+  [[rootlink link]]
+  (if (= (re-find #"http" link) (seq nil))
+    [rootlink (str rootlink link)]
+    [rootlink link]))
+	
 (defn get-links
   [url]
-  (map #(vector url %)(map :href (map :attrs (html/select (fetch-url url) [:a])))))
+  (map #(vector url %)(map #(fix-relative-url %) (map :href (map :attrs (html/select (fetch-url url) [:a]))))))
 
 (defn is-working
   [link]
