@@ -1,13 +1,13 @@
 # clj-validateurl
 
-FIXME: write description
 
-## Usage
 
-FIXME: write
+What?
+_______
 
-## License
+A utility to identify broken links and record them.
 
-Copyright (C) 2011 FIXME
+Usage
+_______
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Usage: -url <FQDN URL> e.g. -url \"http://www.slashdot.org\"
