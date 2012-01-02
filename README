@@ -11,3 +11,8 @@ Usage
 _______
 
 Usage: -url <FQDN URL> e.g. -url \"http://www.slashdot.org\"
+
+Dependencies
+_______
+
+Requires a mongodb instance.
