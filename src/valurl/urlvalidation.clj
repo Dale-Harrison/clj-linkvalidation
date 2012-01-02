@@ -15,7 +15,7 @@
 	
 (defn get-links
   [url]
-  (map #(vector url %)(map #(fix-relative-url %) (map :href (map :attrs (html/select (fetch-url url) [:a]))))))
+  (map fix-relative-url (map #(vector url %)(map :href (map :attrs (html/select (fetch-url url) [:a]))))))
 
 (defn is-working
   [link]
@@ -26,10 +26,14 @@
 
 (defn process-links
   [links]
-  (if (not (is-working (get (first links) 1)))
+  (if (not (empty? links))
     (do
-      (db/add-bad-url (get (first links) 1) (get (first links) 0))
-      (recur (rest links)))
+      (if (not (is-working (get (first links) 1)))
+	(do
+	  (db/add-bad-url (get (first links) 1) (get (first links) 0))
+	  (recur (rest links)))
+	(do
+	  (recur (concat (rest links) (get-links (get (first links) 1)))))))
     (do
-      (recur (concat (rest links) (get-links (get (first links) 1)))))))
+      (println "Links is empty"))))
 

@@ -4,7 +4,8 @@
   (:use valurl.urlvalidation))
 
 (defn -main[& args]
-  (with-command-line args
+  (with-command-line
+    args
     ""
-    [[url "The URL to be processed" "http://www.google.co.uk"]]
+    [[url "The URL to be processed" "http://www.slashdot.co.uk"]]
     (process-links (get-links url))))
