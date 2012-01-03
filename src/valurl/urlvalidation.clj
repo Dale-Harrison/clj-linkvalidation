@@ -9,9 +9,13 @@
 
 (defn fix-relative-url
   [[rootlink link]]
-  (if (= (re-find #"http" link) (seq nil))
-    [rootlink (str rootlink link)]
-    [rootlink link]))
+  (if (not (= link nil))
+    (do
+      (if (= (re-find #"http" link) (seq nil))
+	[rootlink (str rootlink link)]
+	[rootlink link]))
+    (do
+      [rootlink "nil"])))
 	
 (defn get-links
   [url]
